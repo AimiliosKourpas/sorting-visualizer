@@ -59,12 +59,15 @@ export default class SortingVisualizer extends React.Component {
   startSort = () => {
     const { selectedAlgorithm, array } = this.state;
     if (!selectedAlgorithm || this.state.sorting) return;
-
-    const animations = this.getAnimations(selectedAlgorithm, array.slice());
+  
+    const arrayCopy = array.slice();
+    const animations = this.getAnimations(selectedAlgorithm, arrayCopy);
+  
     this.setState({ sorting: true }, () => {
-      this.animate(animations);
+      this.animate(animations, arrayCopy);
     });
   };
+  
 
   getAnimations = (algo, arrayCopy) => {
     switch (algo) {
@@ -76,7 +79,7 @@ export default class SortingVisualizer extends React.Component {
     }
   };
 
-  animate = (animations) => {
+  animate = (animations, sortedArray) => {
     const arrayBars = document.getElementsByClassName('array-bar');
     const speed = this.getAnimationSpeed();
   
@@ -99,9 +102,16 @@ export default class SortingVisualizer extends React.Component {
     }
   
     setTimeout(() => {
-      this.setState({ sorting: false, selectedAlgorithm: null });
+      // Set all bars gold after sorting
+      for (let bar of arrayBars) {
+        bar.style.backgroundColor = '#FFD700'; // gold color
+      }
+  
+      // Update the state array with the sorted one
+      this.setState({ array: sortedArray, sorting: false, selectedAlgorithm: null });
     }, animations.length * speed + 100);
   };
+  
 
   mergeSort = () => {
     const arrayCopy = this.state.array.slice();
