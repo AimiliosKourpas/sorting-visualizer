@@ -23,9 +23,16 @@ export default class SortingVisualizer extends React.Component {
   }
 
   componentDidMount() {
-    this.resetArray();
+    const maxBars = window.innerWidth <= 768 ? 100 : this.state.arraySize; // 768px breakpoint for phones/tablets
+    this.setState({ arraySize: Math.min(this.state.arraySize, maxBars) }, this.resetArray);
+  
+    // Also add a resize listener if you want dynamic resizing on window resize:
+    window.addEventListener('resize', this.handleResize);
   }
-
+  
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  }
   resetArray = () => {
     if (this.state.sorting) return;
     const array = Array.from({ length: this.state.arraySize }, () =>
@@ -41,9 +48,21 @@ export default class SortingVisualizer extends React.Component {
   };
   
 
+  handleResize = () => {
+    const maxBars = window.innerWidth <= 768 ? 100 : this.state.arraySize;
+    if (this.state.arraySize > maxBars) {
+      this.setState({ arraySize: maxBars }, this.resetArray);
+    }
+  };
+  
   handleSizeChange = (event) => {
     if (this.state.sorting) return;
-    const newSize = Number(event.target.value);
+  
+    let newSize = Number(event.target.value);
+    const maxBars = window.innerWidth <= 768 ? 100 : newSize;
+  
+    if (newSize > maxBars) newSize = maxBars;
+  
     this.setState({ arraySize: newSize }, this.resetArray);
   };
 
