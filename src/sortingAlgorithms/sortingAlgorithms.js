@@ -168,4 +168,31 @@ export function getMergeSortAnimations(array) {
       animations.push([-1, -1]);
     }
   }
+
+  export function getBubbleSortAnimations(array) {
+    const animations = [];
+    let n = array.length;
+    let swapped;
+  
+    for (let i = 0; i < n - 1; i++) {
+      swapped = false;
+      for (let j = 0; j < n - i - 1; j++) {
+        animations.push([j, j + 1]);     // Comparison color
+        animations.push([j, j + 1]);     // Revert color
+        if (array[j] > array[j + 1]) {
+          animations.push([j, array[j + 1]]);
+          animations.push([j + 1, array[j]]);
+          [array[j], array[j + 1]] = [array[j + 1], array[j]];
+          swapped = true;
+        } else {
+          animations.push([-1, -1]); // No-op for consistent animation length
+          animations.push([-1, -1]);
+        }
+      }
+      if (!swapped) break;
+    }
+  
+    return animations;
+  }
+  
   
