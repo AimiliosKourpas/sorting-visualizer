@@ -1,15 +1,12 @@
-.array-container {
-  padding-top: 70px; /* height of navbar + margin */
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  overflow: hidden;
+.array-bar {
+  transition: height 0.2s ease, background-color 0.2s ease;
 }
 
-  
-  .array-bar {
-    width: 2px;
-    background-color: #4CAF50;
-    display: inline-block;
-    margin: 0 1px;
-  }
+
+.array-bar.comparing {
+  background-color: red !important;
+}
+
+.array-bar.sorted {
+  background-color: green !important;
+}
