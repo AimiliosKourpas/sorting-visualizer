@@ -4,8 +4,7 @@ import {
   getQuickSortAnimations,
   getHeapSortAnimations,
   getBubbleSortAnimations,
-  getSortedArray, // <-- new helper
-} from '../sortingAlgorithms/sortingAlgorithms.js';
+} from '../sortingAlgorithms/sortingAlgorithms';
 import './SortingVisualizer.css';
 import Navbar from '../components/Navbar';
 
@@ -18,6 +17,8 @@ export default class SortingVisualizer extends React.Component {
     this.state = {
       array: [],
       arraySize: 100,
+      selectedAlgorithm: null,
+      sorting: false,
     };
   }
 
@@ -25,59 +26,82 @@ export default class SortingVisualizer extends React.Component {
     this.resetArray();
   }
 
+  resetArray = () => {
+    if (this.state.sorting) return;
+    const array = Array.from({ length: this.state.arraySize }, () =>
+      randomIntFromInterval(5, 730)
+    );
+    this.setState({ array, selectedAlgorithm: null }, () => {
+      // Reset background color inline styles after state updates
+      const arrayBars = document.getElementsByClassName('array-bar');
+      for (let bar of arrayBars) {
+        bar.style.backgroundColor = '#40c4ff'; // your blue color
+      }
+    });
+  };
+  
+
   handleSizeChange = (event) => {
+    if (this.state.sorting) return;
     const newSize = Number(event.target.value);
-    this.setState({ arraySize: newSize }, () => this.resetArray());
+    this.setState({ arraySize: newSize }, this.resetArray);
   };
 
-  resetArray() {
-    const array = [];
-    for (let i = 0; i < this.state.arraySize; i++) {
-      array.push(randomIntFromInterval(5, 730));
+  getAnimationSpeed = () => {
+    return Math.max(1, Math.floor(300 / this.state.arraySize));
+  };
+
+  setAlgorithm = (algo) => {
+    if (this.state.sorting) return;
+    this.setState({ selectedAlgorithm: algo });
+  };
+
+  startSort = () => {
+    const { selectedAlgorithm, array } = this.state;
+    if (!selectedAlgorithm || this.state.sorting) return;
+
+    const animations = this.getAnimations(selectedAlgorithm, array.slice());
+    this.setState({ sorting: true }, () => {
+      this.animate(animations);
+    });
+  };
+
+  getAnimations = (algo, arrayCopy) => {
+    switch (algo) {
+      case 'merge': return getMergeSortAnimations(arrayCopy);
+      case 'quick': return getQuickSortAnimations(arrayCopy);
+      case 'heap': return getHeapSortAnimations(arrayCopy);
+      case 'bubble': return getBubbleSortAnimations(arrayCopy);
+      default: return [];
     }
-    this.setState({ array });
-  }
+  };
 
-  getAnimationSpeed() {
-    const { arraySize } = this.state;
-    return Math.max(1, Math.min(100, Math.floor(300 / arraySize)));
-  }
-
-  animate(animations) {
+  animate = (animations) => {
     const arrayBars = document.getElementsByClassName('array-bar');
     const speed = this.getAnimationSpeed();
   
     for (let i = 0; i < animations.length; i++) {
-      const [action, idx1, idx2] = animations[i];
+      const animation = animations[i];
+      const [type, index1, index2] = animation;
   
       setTimeout(() => {
-        if (action === 'compare') {
-          const barOne = arrayBars[idx1];
-          const barTwo = arrayBars[idx2];
-          barOne.style.backgroundColor = SECONDARY_COLOR;
-          barTwo.style.backgroundColor = SECONDARY_COLOR;
-        } else if (action === 'revert') {
-          const barOne = arrayBars[idx1];
-          const barTwo = arrayBars[idx2];
-          barOne.style.backgroundColor = PRIMARY_COLOR;
-          barTwo.style.backgroundColor = PRIMARY_COLOR;
-        } else if (action === 'swap') {
-          const bar = arrayBars[idx1];
-          bar.style.height = `${idx2}px`;
+        if (type === 'compare' || type === 'revert') {
+          const color = type === 'compare' ? SECONDARY_COLOR : PRIMARY_COLOR;
+          const barOne = arrayBars[index1];
+          const barTwo = arrayBars[index2];
+          if (barOne) barOne.style.backgroundColor = color;
+          if (barTwo) barTwo.style.backgroundColor = color;
+        } else if (type === 'swap') {
+          const bar = arrayBars[index1];
+          if (bar) bar.style.height = `${index2}px`;
         }
       }, i * speed);
     }
   
-    // Mark sorted at end
     setTimeout(() => {
-      for (let bar of arrayBars) {
-        bar.style.backgroundColor = 'green';
-      }
-    }, animations.length * speed + speed);
-  }
-  
-  
-  
+      this.setState({ sorting: false, selectedAlgorithm: null });
+    }, animations.length * speed + 100);
+  };
 
   mergeSort = () => {
     const arrayCopy = this.state.array.slice();
@@ -125,25 +149,18 @@ export default class SortingVisualizer extends React.Component {
     }, animationDuration);
   };
   
-
-  testSortingAlgorithms = () => {
-    for (let i = 0; i < 100; i++) {
-      const array = [];
-      const length = randomIntFromInterval(1, 100);
-      for (let j = 0; j < length; j++) {
-        array.push(randomIntFromInterval(-1000, 1000));
-      }
-
-      const jsSorted = array.slice().sort((a, b) => a - b);
-      const mergeSorted = getSortedArray(array.slice());
-      console.log(arraysAreEqual(jsSorted, mergeSorted));
-    }
-  };
-
   render() {
-    const { array } = this.state;
-    const barWidth = Math.max(2, Math.floor(window.innerWidth / this.state.arraySize)) - 2;
+    const { array, arraySize, selectedAlgorithm, sorting } = this.state;
     
+    // Max width for bars, min width to avoid too thin bars on big arrays
+    const maxBarWidth = 15;
+    const minBarWidth = 3;
+    // Calculate width by dividing viewport width minus padding by array size,
+    // but clamp between min and max widths
+    const availableWidth = window.innerWidth - 40; // padding from container
+    let barWidth = Math.floor(availableWidth / arraySize) - 2;
+    barWidth = Math.min(maxBarWidth, Math.max(minBarWidth, barWidth));
+  
     return (
       <div className="array-container">
         {array.map((value, idx) => (
@@ -151,21 +168,20 @@ export default class SortingVisualizer extends React.Component {
             className="array-bar"
             key={idx}
             style={{
-              backgroundColor: PRIMARY_COLOR,
               height: `${value}px`,
               width: `${barWidth}px`,
-              display: 'inline-block',
-              margin: '0 1px',
-            }}></div>
+            }}
+          />
         ))}
+  
         <Navbar
-          onGenerate={() => this.resetArray()}
-          onMerge={this.mergeSort}
-          onQuick={this.quickSort}
-          onHeap={this.heapSort}
-          onBubble={this.bubbleSort}
-          size={this.state.arraySize}
+          onGenerate={this.resetArray}
           onSizeChange={this.handleSizeChange}
+          size={arraySize}
+          onSelectAlgorithm={this.setAlgorithm}
+          selectedAlgorithm={selectedAlgorithm}
+          onStartSort={this.startSort}
+          sorting={sorting}
         />
       </div>
     );

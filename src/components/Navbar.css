@@ -1,54 +1,133 @@
-/* Navbar.css */
 .navbar {
     position: fixed;
     top: 0;
-    left: 0;
     width: 100%;
-    height: 60px; /* fixed height */
-    background-color: #333;
-    color: white;
+    background-color: #1976d2; /* lighter blue */
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
+    padding: 10px 20px;
     z-index: 1000;
+    box-sizing: border-box;
+    box-shadow: none; /* remove shadow */
   }
   
-  .navbar-title {
-    margin: 0;
-    font-size: 1.5rem;
-  }
-  
-  .navbar-buttons button {
-    margin: 0 5px;
-    padding: 8px 12px;
-    font-size: 0.95rem;
-    background-color: turquoise;
-    color: #000;
+  /* Hide toggle button on desktop */
+  .menu-toggle {
+    display: none;
+    font-size: 24px;
+    background: none;
     border: none;
-    border-radius: 5px;
+    color: white;
     cursor: pointer;
   }
   
-  .navbar-buttons button:hover {
-    background-color: #00b3b3;
-  }
-  
-  .navbar-controls {
+  /* Container for buttons and inputs */
+  .menu-items {
     display: flex;
-    align-items: center;
     flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
   }
   
-  .slider-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-left: 20px;
+  /* Responsive styles */
+  @media (max-width: 600px) {
+    .menu-toggle {
+      display: block;
+      margin-left: auto;
+    }
+  
+    .menu-items {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      background-color: #1976d2;
+      padding: 10px 0;
+      /* Removed shadow from menu to keep it clean */
+      box-shadow: none;
+    }
+  
+    .menu-items.show {
+      display: flex;
+    }
+  
+    .menu-items button,
+    .menu-items input[type='range'] {
+      width: 90%;
+      margin: 5px auto;
+    }
+  
+    /* Move array container to bottom fixed on mobile */
+    .array-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      height: 25vh;
+      width: 100vw;
+      margin: 0;
+      padding: 5px 10px;
+      border-radius: 10px 10px 0 0;
+      background: #f5f7fa;
+      box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
+      overflow-y: hidden;
+      justify-content: flex-start; /* align bars to left for scrolling */
+      gap: 2px;
+      display: flex;
+      align-items: flex-end;
+    }
+  
+    /* Bars smaller and spaced for mobile */
+    .array-bar {
+      max-width: 10px;
+      min-width: 2px;
+      margin: 0 1px;
+      box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15); /* nice shadow */
+    }
+  
+    /* Push page content above navbar and bars */
+    body, #root {
+      padding-top: 50px; /* height of navbar */
+      padding-bottom: 25vh; /* height of bars container */
+    }
+  }
+  
+  /* Disabled button style */
+  button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Selected algorithm button */
+  button.selected {
+    background-color: #00aaff;
     color: white;
   }
   
-  .slider-container input[type="range"] {
-    width: 150px;
+  /* Array container (desktop) */
+  .array-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 70vh;
+    width: 95vw;
+    margin: 70px auto 20px; /* margin top to avoid navbar overlap */
+    gap: 2px;
+    background: #f5f7fa;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    overflow-x: auto;
+  }
+  
+  /* Each individual bar */
+  .array-bar {
+    background-color: #40c4ff;
+    border-radius: 3px 3px 0 0;
+    transition: height 0.25s ease, background-color 0.25s ease;
+    flex: 1 1 auto;
+    max-width: 15px;
+    min-width: 2px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15); /* subtle bottom shadow */
   }
   
