@@ -1,10 +1,17 @@
+/* Navbar.css */
 .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px; /* fixed height */
+    background-color: #333;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #0e374e;
-    padding: 10px 20px;
-    color: white;
+    padding: 0 20px;
+    z-index: 1000;
   }
   
   .navbar-title {
@@ -25,5 +32,23 @@
   
   .navbar-buttons button:hover {
     background-color: #00b3b3;
+  }
+  
+  .navbar-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 20px;
+    color: white;
+  }
+  
+  .slider-container input[type="range"] {
+    width: 150px;
   }
   

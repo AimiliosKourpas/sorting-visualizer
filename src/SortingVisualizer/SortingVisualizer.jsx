@@ -19,12 +19,14 @@ const PRIMARY_COLOR = 'turquoise';
 // This is the color of array bars that are being compared throughout the animations.
 const SECONDARY_COLOR = 'red';
 
+
 export default class SortingVisualizer extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       array: [],
+      arraySize: 100,
     };
   }
 
@@ -32,9 +34,15 @@ export default class SortingVisualizer extends React.Component {
     this.resetArray();
   }
 
+  handleSizeChange = (event) => {
+    const newSize = Number(event.target.value);
+    this.setState({ arraySize: newSize }, () => this.resetArray());
+  };
+  
+
   resetArray() {
     const array = [];
-    for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
+    for (let i = 0; i < this.state.arraySize; i++) {
       array.push(randomIntFromInterval(5, 730));
     }
     this.setState({array});
@@ -165,6 +173,7 @@ export default class SortingVisualizer extends React.Component {
 
   render() {
     const {array} = this.state;
+    const barWidth = Math.floor(window.innerWidth / array.length);
 
     return (
       <div className="array-container">
@@ -175,11 +184,15 @@ export default class SortingVisualizer extends React.Component {
             style={{
               backgroundColor: PRIMARY_COLOR,
               height: `${value}px`,
+              width: `${barWidth}px`,
+              display: 'inline-block',
+              margin: '0 1px',
             }}></div>
         ))}
         <Navbar
   onGenerate={() => this.resetArray()}
- onMerge={() => this.mergeSort()}onQuick={() => this.quickSort()} onHeap={() => this.heapSort()} onBubble={() => this.bubbleSort()}/>
+ onMerge={() => this.mergeSort()}onQuick={() => this.quickSort()} onHeap={() => this.heapSort()} onBubble={() => this.bubbleSort()} size={this.state.arraySize}
+ onSizeChange={this.handleSizeChange}/>
 
       </div>
     );

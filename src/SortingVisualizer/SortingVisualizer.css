@@ -1,8 +1,11 @@
 .array-container {
-    position: absolute;
-    left: 100px;
-    /* top: 100px; */
-  }
+  padding-top: 70px; /* height of navbar + margin */
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+}
+
   
   .array-bar {
     width: 2px;
