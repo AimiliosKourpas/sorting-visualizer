@@ -1,82 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './Navbar.css';
+import { ALGORITHMS, ALGORITHM_KEYS } from '../sortingAlgorithms/sortingAlgorithms';
 
-export default function Navbar({
-  onGenerate,
-  onSizeChange,
-  size,
-  onSelectAlgorithm,
-  selectedAlgorithm,
-  onStartSort,
-  sorting
-}) {
-  const [showMenu, setShowMenu] = useState(false);
-
-  // Close menu when sorting starts or algorithm changes
-  useEffect(() => {
-    if (sorting) setShowMenu(false);
-  }, [sorting]);
-
-  // Close menu on window resize if desktop size
-  useEffect(() => {
-    function handleResize() {
-      if (window.innerWidth > 600) setShowMenu(false);
-    }
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
+export default function Navbar({ selectedAlgorithm, onSelectAlgorithm }) {
   return (
-    <nav className="navbar">
-      <button
-        className="menu-toggle"
-        onClick={() => setShowMenu(prev => !prev)}
-        aria-label="Toggle menu"
-      >
-        &#x22EE; {/* Vertical 3 dots */}
-      </button>
+    <header className="navbar">
+      <div className="brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <rect x="2" y="13" width="4" height="9" rx="1" />
+          <rect x="8" y="8" width="4" height="14" rx="1" />
+          <rect x="14" y="3" width="4" height="19" rx="1" />
+          <rect x="20" y="10" width="2.5" height="12" rx="1" />
+        </svg>
+        Sorting Visualizer
+      </div>
 
-      {/* Show menu buttons if desktop or menu toggled */}
-      <div className={`menu-items ${showMenu ? 'show' : ''}`}>
-        <button
-          onClick={onGenerate}
-          disabled={sorting}
-          className={sorting ? 'disabled' : ''}
-        >
-          Generate New Array
-        </button>
-
-        <input
-          type="range"
-          min="10"
-          max="200"
-          value={size}
-          onChange={onSizeChange}
-          disabled={sorting}
-          className={sorting ? 'disabled' : ''}
-        />
-
-        {['merge', 'quick', 'heap', 'bubble'].map(algo => (
+      <nav className="algos" aria-label="Algorithm">
+        {ALGORITHM_KEYS.map((algo) => (
           <button
             key={algo}
             onClick={() => onSelectAlgorithm(algo)}
-            disabled={sorting}
-            className={sorting ? 'disabled' : selectedAlgorithm === algo ? 'selected' : ''}
+            aria-pressed={selectedAlgorithm === algo}
+            className={selectedAlgorithm === algo ? 'selected' : ''}
           >
-            {algo.charAt(0).toUpperCase() + algo.slice(1)} Sort
+            {ALGORITHMS[algo].short}
           </button>
         ))}
-
-        {selectedAlgorithm && (
-          <button
-            onClick={onStartSort}
-            disabled={sorting}
-            className="sort-button"
-          >
-            Sort!
-          </button>
-        )}
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }

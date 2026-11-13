@@ -1,5 +1,53 @@
+:root {
+  color-scheme: light dark;
+
+  --page: #eef2f6;
+  --card: #ffffff;
+  --inset: #f4f7fa;
+  --border: #dde4ea;
+  --text: #1c2730;
+  --muted: #5b6b78;
+  --accent: #1976d2;
+  --accent-hover: #1565c0;
+  --accent-soft: #e3f2fd;
+  --on-accent: #ffffff;
+  --header: #1976d2;
+  --shadow: 0 1px 2px rgba(16, 32, 48, 0.06), 0 6px 20px rgba(16, 32, 48, 0.06);
+
+  --bar: #40c4ff;
+  --bar-compare: #ff5252;
+  --bar-write: #ff9100;
+  --bar-pivot: #7e57c2;
+  --bar-sorted: #ffc400;
+
+  --code-bg: #1e2a33;
+  --code-text: #c5d1da;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0e151c;
+    --card: #17212b;
+    --inset: #1e2a36;
+    --border: #2a3846;
+    --text: #e6edf3;
+    --muted: #9aabba;
+    --accent: #42a5f5;
+    --accent-hover: #64b5f6;
+    --accent-soft: #16324b;
+    --on-accent: #08131d;
+    --header: #132a40;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.25);
+
+    --bar-pivot: #a48be0;
+    --code-bg: #0b1218;
+  }
+}
+
 body {
   margin: 0;
+  background: var(--page);
+  color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
